@@ -23,3 +23,28 @@ async function signInWithGoogle() {
     alert('কোনো একটি সমস্যা হয়েছে, আবার চেষ্টা করুন।');
   }
 }
+// Check logged in user on main page
+async function checkUserSession() {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  
+  const profileDiv = document.getElementById('user-profile');
+  const userEmailSpan = document.getElementById('user-email');
+  const authLinks = document.getElementById('auth-links');
+
+  if (session && session.user) {
+    if (userEmailSpan) userEmailSpan.innerText = session.user.email;
+    if (profileDiv) profileDiv.style.display = 'flex';
+    if (authLinks) authLinks.style.display = 'none';
+  } else {
+    if (profileDiv) profileDiv.style.display = 'none';
+    if (authLinks) authLinks.style.display = 'flex';
+  }
+}
+
+// Logout Function
+async function handleLogout() {
+  await supabaseClient.auth.signOut();
+  window.location.reload();
+}
+
+window.addEventListener('DOMContentLoaded', checkUserSession);
