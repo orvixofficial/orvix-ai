@@ -41,3 +41,13 @@ if (loginForm) {
         }
     });
 }
+// Google Login Function
+async function signInWithGoogle() {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: 'https://orvix-aibd.vercel.app'
+    }
+  });
+  if (error) console.error('Error logging in:', error.message);
+}
