@@ -1,81 +1,100 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orvix AI - Enterprise Intelligence Platform</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orvix AI - Enterprise Intelligence Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Supabase JS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <!-- Top Navigation Bar -->
-    <nav class="navbar">
-        <div class="brand">
-            <div class="logo-icon">O</div>
-            <div class="logo-text">Orvix<span>AI</span></div>
-            <span class="version-tag">v1.0 Pro</span>
-        </div>
-        <div class="nav-buttons">
-            <a href="login.html" class="btn btn-secondary">Sign In</a>
-            <a href="signup.html" class="btn btn-primary">Get Started</a>
-        </div>
-    </nav>
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <div class="brand">
+      <div class="logo-icon">O</div>
+      <div class="logo-text">Orvix<span>AI</span></div>
+      <span class="version-tag">v1.0 Pro</span>
+    </div>
+    
+    <div class="nav-buttons">
+      <!-- Logged in state (ইউজার লগইন থাকলে ইমেইল ও লগআউট বাটন দেখাবে) -->
+      <div id="user-profile" style="display: none; align-items: center; gap: 12px;">
+        <span id="user-email" style="font-weight: 600; color: #fff;"></span>
+        <button onclick="handleLogout()" class="btn btn-secondary" style="padding: 6px 14px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;">Logout</button>
+      </div>
 
-    <!-- Hero Workspace Section -->
-    <header class="hero">
-        <div class="badge">
-            <span class="pulse"></span> Next-Gen AI Workspace
-        </div>
-        <h1>Next Generation Intelligence for <span>Modern Business</span></h1>
-        <p>এডভান্সড এআই চ্যাট, ডকুমেন্ট অটোমেশন এবং ডাটা অ্যানালাইসিসের শক্তিশালী অল-ইন-ওয়ান প্ল্যাটফর্ম।</p>
-        
-        <div class="hero-cta">
-            <button onclick="handleStartChat()" class="btn btn-glow btn-lg">Start Chat ⚡</button>
-            <a href="#features" class="btn btn-outline btn-lg">Explore Features</a>
-        </div>
-    </header>
+      <!-- Guest state (ইউজার লগইন না থাকলে এই বাটনগুলো দেখাবে) -->
+      <div id="auth-links" style="display: flex; gap: 10px;">
+        <a href="login.html" class="btn btn-secondary">Sign In</a>
+        <a href="signup.html" class="btn btn-primary">Get Started</a>
+      </div>
+    </div>
+  </nav>
 
-    <!-- Capabilities Grid -->
-    <section id="features" class="features">
-        <div class="section-title">
-            <h2>Core Platform Capabilities</h2>
-            <p>আপনার ব্যবসাকে দ্রুততর করতে আমাদের আল্ট্রা-ফাস্ট এআই ফিচারসমূহ</p>
-        </div>
+  <!-- Hero Workspace Section -->
+  <header class="hero">
+    <div class="badge">
+      <span class="pulse"></span> Next-Gen AI Workspace
+    </div>
+    <h1>Next Generation Intelligence for <span>Modern Business</span></h1>
+    <p>এডভান্সড এআই চ্যাট, ডকুমেন্ট অটোমেশন এবং ডাটা অ্যানালাইসিসের শক্তিশালী অল-ইন-ওয়ান প্ল্যাটফর্ম।</p>
 
-        <div class="grid">
-            <div class="card">
-                <div class="card-glow"></div>
-                <div class="icon">💬</div>
-                <h3>Intelligent Neural Chat</h3>
-                <p>যেকোনো জটিল প্রশ্নের ইনস্ট্যান্ট উত্তর, কনটেক্সট ট্র্যাকিং এবং নিখুঁত এআই চ্যাট ইন্টারফেস।</p>
-            </div>
-            <div class="card">
-                <div class="card-glow"></div>
-                <div class="icon">📄</div>
-                <h3>Doc Generator Pro</h3>
-                <p>বিজনেস রিপোর্ট, কন্ট্রাক্ট, ইমেইল এবং প্রপোজাল মাত্র কয়েক সেকেন্ডে জেনারেট করুন।</p>
-            </div>
-            <div class="card">
-                <div class="icon">📂</div>
-                <h3>Deep Knowledge RAG</h3>
-                <p>PDF/DOCX ফাইল আপলোড করে অটোমেটিক সামারি, ইনসাইট এবং ডাটা এক্সট্রাকশন করুন।</p>
-            </div>
-            <div class="card">
-                <div class="icon">⚡</div>
-                <h3>Autonomous Automation</h3>
-                <p>দৈনন্দিন ম্যানুয়াল ও রুটিন টাস্কগুলো অটোমেট করে কাজের গতি বাড়িয়ে নিন বহুগুণ।</p>
-            </div>
-        </div>
-    </section>
+    <div class="hero-cta">
+      <button onclick="handleStartChat()" class="btn btn-glow btn-lg">Start Chat ⚡</button>
+      <a href="#features" class="btn btn-outline btn-lg">Explore Features</a>
+    </div>
+  </header>
 
-    <!-- Minimal Modern Footer -->
-    <footer>
-        <p>&copy; 2026 Orvix AI (v1.0 Pro). All rights reserved.</p>
-    </footer>
+  <!-- Capabilities Grid -->
+  <section id="features" class="features">
+    <div class="section-title">
+      <h2>Core Platform Capabilities</h2>
+      <p>আপনার ব্যবসাকে দ্রুততর করতে আমাদের আল্ট্রা-ফাস্ট এআই ফিচারসমূহ</p>
+    </div>
 
-    <script src="script.js"></script>
+    <div class="grid">
+      <div class="card">
+        <div class="card-glow"></div>
+        <div class="icon">💬</div>
+        <h3>Intelligent Neural Chat</h3>
+        <p>যেকোনো জটিল প্রশ্নের ইনস্ট্যান্ট উত্তর, কনটেক্সট ট্র্যাকিং এবং নিখুঁত এআই চ্যাট ইন্টারফেস।</p>
+      </div>
+
+      <div class="card">
+        <div class="card-glow"></div>
+        <div class="icon">📄</div>
+        <h3>Doc Generator Pro</h3>
+        <p>বিজনেস রিপোর্ট, কন্ট্রাক্ট, ইমেইল এবং প্রস্তাবনা মাত্র কয়েক সেকেন্ডে জেনারেট করুন।</p>
+      </div>
+
+      <div class="card">
+        <div class="card-glow"></div>
+        <div class="icon">📂</div>
+        <h3>Deep Knowledge RAG</h3>
+        <p>PDF/DOCX ফাইল আপলোড করে অটোমেটিক সামারি, ইনসাইট এবং ডাটা এক্সট্র্যাকশন করুন।</p>
+      </div>
+
+      <div class="card">
+        <div class="card-glow"></div>
+        <div class="icon">⚡</div>
+        <h3>Autonomous Automation</h3>
+        <p>দৈনন্দিন ম্যানুয়াল ও রুটিন টাস্কগুলো অটোমেট করে কাজের গতি বাড়িয়ে নিন বহুগুণ।</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Minimal Modern Footer -->
+  <footer>
+    <p>&copy; 2026 Orvix AI (v1.0 Pro). All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
 </body>
 </html>
