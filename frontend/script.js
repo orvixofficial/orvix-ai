@@ -1,1 +1,4 @@
-console.log("Orvix AI Started");
+
+document.getElementById("startBtn").addEventListener("click", () => {
+    alert("Welcome to Orvix AI! 🚀");
+});
