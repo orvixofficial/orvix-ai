@@ -1,67 +1,324 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+/* -- বেসিক রিসেট এবং ভেরিয়েবল -- */
+:root {
+    --bg-dark: #020617; /* কুচকুচে কালো */
+    --bg-card: rgba(30, 41, 59, 0.5); /* আবছা স্বচ্ছ কার্ড */
+    --accent-blue: #3b82f6;
+    --accent-glow: #60a5fa;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.06); /* খুব হালকা বর্ডার */
+    --glass: blur(12px) saturate(180%);
+    --font-family: 'Inter', sans-serif;
 }
 
-body{
-    font-family:Arial, sans-serif;
-    background:#0b1020;
-    color:white;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth; /* স্মুথ স্ক্রলিং */
 }
 
-.navbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:20px 10%;
-    background:#111827;
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-family);
+    line-height: 1.6;
+    overflow-x: hidden;
 }
 
-.logo{
-    font-size:28px;
-    font-weight:bold;
-    color:#4F8CFF;
+/* -- এনিমেশন কী-ফ্রেম -- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-nav a{
-    color:white;
-    text-decoration:none;
-    margin-left:20px;
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
 }
 
-.hero{
-    height:85vh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    padding:20px;
+/* -- গ্লোবাল বাটন স্টাইল (প্রিমিয়াম) -- */
+.btn {
+    padding: 0.7rem 1.5rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.hero h1{
-    font-size:52px;
-    margin-bottom:20px;
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(29, 78, 216, 0.3);
 }
 
-.hero p{
-    font-size:20px;
-    color:#bdbdbd;
-    max-width:700px;
-    margin-bottom:30px;
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(29, 78, 216, 0.5);
 }
 
-button{
-    padding:15px 35px;
-    border:none;
-    border-radius:10px;
-    background:#4F8CFF;
-    color:white;
-    font-size:18px;
-    cursor:pointer;
+.btn-secondary {
+    color: var(--text-muted);
 }
 
-button:hover{
-    transform:scale(1.05);
+.btn-secondary:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.03);
 }
+
+.btn-outline {
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.btn-lg {
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
+}
+
+/* -- Navbar (Glassmorphism) -- */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 8%;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    background-color: rgba(2, 6, 23, 0.8);
+    backdrop-filter: var(--glass);
+    -webkit-backdrop-filter: var(--glass);
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--text-main);
+}
+
+.logo span {
+    color: var(--accent-blue);
+    position: relative;
+}
+
+/* লোগোর নিচে ছোট্ট নীল গ্লো */
+.logo span::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent-blue);
+    filter: blur(2px);
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem;
+}
+
+.nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--accent-glow);
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 0.8rem;
+}
+
+/* -- Hero Section (Premium Look) -- */
+.hero {
+    text-align: center;
+    padding: 8rem 5% 6rem;
+    max-width: 900px;
+    margin: 0 auto;
+    animation: fadeInUp 1s ease-out; /* ভেসে ওঠার এনিমেশন */
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.4rem 1.2rem;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+    color: var(--accent-glow);
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    letter-spacing: 0.5px;
+    animation: glow 3s infinite; /* হালকা জলার এনিমেশন */
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    letter-spacing: -1.5px;
+    color: var(--text-main);
+}
+
+/* গ্রেডিয়েন্ট টেক্সট */
+.hero h1 span {
+    background: linear-gradient(135deg, #60a5fa 0%, #a855f7 50%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% auto;
+    animation: textGradientEffect 4s linear infinite;
+}
+
+@keyframes textGradientEffect {
+    to { background-position: 200% center; }
+}
+
+.hero p {
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    margin-bottom: 3rem;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: 400;
+}
+
+.hero-cta {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+/* -- Features Section -- */
+.features {
+    padding: 6rem 8%;
+    max-width: 1300px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.features h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 4rem;
+    letter-spacing: -1px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+/* প্রিমিয়াম কার্ড স্টাইল */
+.card {
+    background-color: var(--bg-card);
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+/* কার্ডের ওপর হোভার করলে বর্ডার নীল হবে এবং সামান্য বড় হবে */
+.card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(59, 130, 246, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* কার্ডের ভেতর হালকা গ্রেডিয়েন্ট এফেক্ট */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(800px circle at var(--x) var(--y), rgba(59, 130, 246, 0.05), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card .icon {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    /* আইকনের নিচে হালকা নীল আভা */
+    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+}
+
+.card h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text-main);
+}
+
+.card p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+/* -- Footer -- */
+footer {
+    text-align: center;
+    padding: 3rem 8%;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* -- মোবাইল এবং ট্যাবলেটের জন্য রেসপন্সিভনেস -- */
+@media (max-width: 1024px) {
+    .navbar { padding: 1rem 5%; }
+    .hero h1 { font-size: 3rem; }
+}
+
+@media (max-width: 768px) {
+    .nav-links { display: none; } /* মোবাইলে মেনু হাইড */
+    
+    .hero { padding: 6rem 1rem 4rem; }
+    .hero h1 { font-size: 2.2rem; }
+    .hero p { font-size: 1.1rem; }
+    
+    .hero-cta {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+    }
+    
+    .btn-lg {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .features h2 { font-size: 2rem; }
+    .card { padding: 2rem; }
+    }
