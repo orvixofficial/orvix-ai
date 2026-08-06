@@ -3,48 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In - Orvix AI</title>
+  <title>Login - Orvix AI</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- Supabase CDN -->
+  <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #0f172a; color: #fff; font-family: 'Inter', sans-serif;">
 
-  <div class="auth-container">
-    <div class="auth-card">
-      <div class="logo">Orvix<span>.AI</span></div>
-      <h2>Welcome Back</h2>
-      <p>আপনার অ্যাকাউন্টে সাইন ইন করুন</p>
+  <div style="background: #1e293b; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 100%; max-width: 400px; text-align: center; border: 1px solid #334155;">
+    <h2 style="margin-bottom: 10px; color: #38bdf8; font-size: 24px;">Orvix AI-তে স্বাগতম</h2>
+    <p style="color: #94a3b8; font-size: 14px; margin-bottom: 30px;">চালিয়ে যেতে আপনার অ্যাকাউন্ট দিয়ে লগইন করুন</p>
 
-      <form id="loginForm">
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="email" placeholder="name@example.com" required>
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="password" placeholder="••••••••" required>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-      </form>
-
-      <!-- Google Sign In Button -->
-      <div style="margin: 15px 0; text-align: center;">
-        <p style="margin-bottom: 10px; color: #666;">অথবা</p>
-        <button type="button" onclick="signInWithGoogle()" class="btn btn-block" style="background: #fff; color: #333; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; cursor: pointer; border-radius: 6px;">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="18">
-          Sign in with Google
-        </button>
-      </div>
-
-      <p class="auth-footer">
-        অ্যাকাউন্ট নেই? <a href="signup.html">Sign Up করুন</a>
-      </p>
-    </div>
+    <!-- Google Login Button -->
+    <button onclick="signInWithGoogle()" style="width: 100%; padding: 12px; background: #ffffff; color: #1e293b; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.3s;">
+      <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.46-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Google দিয়ে লগইন করুন
+    </button>
   </div>
 
   <script src="auth.js"></script>
+  <script>
+    // পেজ লোড হওয়ার সাথে সাথে চেক করা ইউজার অলরেডি লগইন করা আছে কিনা
+    window.addEventListener('load', async () => {
+      setTimeout(async () => {
+        if (typeof supabaseClient !== 'undefined') {
+          const { data: { session } } = await supabaseClient.auth.getSession();
+          if (session) {
+            window.location.href = 'chat.html';
+          }
+        }
+      }, 500);
+    });
+  </script>
 </body>
 </html>
