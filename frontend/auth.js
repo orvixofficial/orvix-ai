@@ -2,17 +2,16 @@
 const SUPABASE_URL = 'https://jyokiouskrfwzuerbyue.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_DBVEUxrgKCO9SQvRp11uHw_Q3_lYIFN';
 
-// Initialize Supabase Client
 const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-// Google Sign-In Function
+// Google Sign-In Function (লগইন সফল হলে সরাসরি chat.html এ রিডাইরেক্ট করবে)
 async function signInWithGoogle() {
   if (!supabaseClient) return alert('Supabase লোড হয়নি!');
   try {
     const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'https://orvix-aibd.vercel.app/'
+        redirectTo: window.location.origin + '/chat.html'
       }
     });
     if (error) alert('লগইন সমস্যা: ' + error.message);
@@ -21,33 +20,39 @@ async function signInWithGoogle() {
   }
 }
 
-// Check logged in user and handle Google redirect state
-async function checkUserSession() {
+// Session Protection & Auto Navigation
+async function handleAuthRouting() {
   if (!supabaseClient) return;
 
-  // ১. Supabase auth state পরিবর্তন ট্র্যাক করা (গুগল থেকে ফেরার পর এটি অটো টোকেন ধরে নেবে)
-  supabaseClient.auth.onAuthStateChange(async (event, session) => {
-    updateUI(session);
-  });
-
-  // ২. বর্তমান সেশন চেক করা
   const { data: { session } } = await supabaseClient.auth.getSession();
-  updateUI(session);
-}
+  const currentPath = window.location.pathname;
 
-// UI আপডেট করার ফাংশন
-function updateUI(session) {
-  const profileDiv = document.getElementById('user-profile');
-  const userEmailSpan = document.getElementById('user-email');
-  const authLinks = document.getElementById('auth-links');
+  // ১. যদি ইউজার চ্যাট পেজে থাকে কিন্তু লগইন করা না থাকে -> login.html এ পাঠিয়ে দেবে
+  if (currentPath.includes('chat.html') && !session) {
+    window.location.href = 'login.html';
+    return;
+  }
 
-  if (session && session.user) {
-    if (userEmailSpan) userEmailSpan.innerText = session.user.email;
-    if (profileDiv) profileDiv.style.display = 'flex';
-    if (authLinks) authLinks.style.display = 'none';
-  } else {
-    if (profileDiv) profileDiv.style.display = 'none';
-    if (authLinks) authLinks.style.display = 'flex';
+  // ২. যদি ইউজার অলরেডি লগইন করা থাকে এবং login.html বা signup.html পেজে থাকে -> অটোমেটিক chat.html এ নিয়ে যাবে
+  if ((currentPath.includes('login.html') || currentPath.includes('signup.html') || currentPath.endsWith('/') || currentPath.endsWith('index.html')) && session) {
+    // যদি আপনি চান লগইন করার পর সরাসরি চ্যাট পেজ ওপেন হোক:
+    if (currentPath.includes('login.html') || currentPath.includes('signup.html')) {
+      window.location.href = 'chat.html';
+      return;
+    }
+  }
+
+  // ৩. চ্যাট পেজে থাকলে সাইডবারে ইউজারের নাম ও ছবি সেট করা
+  if (session && session.user && currentPath.includes('chat.html')) {
+    const user = session.user;
+    const userName = user.user_metadata?.full_name || user.email;
+    const userAvatar = user.user_metadata?.avatar_url;
+
+    const nameEl = document.getElementById('sidebar-user-name');
+    const avatarEl = document.getElementById('sidebar-user-avatar');
+
+    if (nameEl) nameEl.innerText = userName;
+    if (avatarEl && userAvatar) avatarEl.src = userAvatar;
   }
 }
 
@@ -55,9 +60,8 @@ function updateUI(session) {
 async function handleLogout() {
   if (supabaseClient) {
     await supabaseClient.auth.signOut();
-    window.location.href = 'index.html';
+    window.location.href = 'login.html';
   }
 }
 
-// পেজ লোড হওয়ার সাথে সাথেই সেশন চেক করবে
-window.addEventListener('load', checkUserSession);
+window.addEventListener('load', handleAuthRouting);
