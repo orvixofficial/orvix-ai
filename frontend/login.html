@@ -11,59 +11,6 @@
 
   <div style="background: #1e293b; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 100%; max-width: 400px; text-align: center; border: 1px solid #334155;">
     <h2 style="margin-bottom: 24px; font-size: 24px;">Orvix AI এ স্বাগতম</h2>
-    <p style="color: #94a3b8; margin-bottom: 30px; font-size: 14px;">এগিয়ে যেতে আপনার Google অ্যাকাউন্ট ব্যবহার করুন</p>
-
-    <!-- Google Login Button -->
-    <button id="google-login-btn" style="width: 100%; padding: 12px; background: #ffffff; color: #1e293b; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;">
-      <svg width="20" height="20" viewBox="0 0 24 24">
-        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.19v3.15C3.17 21.3 7.23 24 12 24z"/>
-        <path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.19C.43 8.13 0 9.87 0 12s.43 3.87 1.19 5.4l4.09-3.15z"/>
-        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.17 2.7 1.19 6.6l4.09 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/>
-      </svg>
-      Google দিয়ে লগইন করুন
-    </button>
-  </div>
-
-  <script>
-    const SUPABASE_URL = 'https://evdchqddhuzbgyexdnyq.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2ZGNoaWRkaHV6Ymd5ZXhkbnlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODYwNzUsImV4cCI6MjA2NjI2MjA3NX0.zVvG5Vq7vYvG5Vq7vYvG5Vq7vYvG5Vq7vYvG5Vq7vYv';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        window.location.replace('/frontend/chat.html');
-      }
-    });
-
-    document.getElementById('google-login-btn').addEventListener('click', async () => {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin + '/frontend/chat.html'
-        }
-      });
-      if (error) {
-        alert('লগইন এরর: ' + error.message);
-      }
-    });
-  </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orvix AI - Login</title>
-  <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body style="margin: 0; font-family: sans-serif; background: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh;">
-
-  <div style="background: #1e293b; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 100%; max-width: 400px; text-align: center; border: 1px solid #334155;">
-    <h2 style="margin-bottom: 24px; font-size: 24px;">Orvix AI এ স্বাগতম</h2>
     <p style="color: #94a3b8; margin-bottom: 30px; font-size: 14px;">এগিয়ে যেতে আপনার GitHub অ্যাকাউন্ট ব্যবহার করুন</p>
 
     <!-- GitHub Login Button -->
@@ -80,7 +27,7 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2ZGNoaWRkaHV6Ymd5ZXhkbnlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODYwNzUsImV4cCI6MjA2NjI2MjA3NX0.zVvG5Vq7vYvG5Vq7vYvG5Vq7vYvG5Vq7vYvG5Vq7vYv';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // পেজ লোড হওয়ার সময় অলরেডি লগইন করা থাকলে চ্যাটে পাঠিয়ে দেওয়া
+    // পেজ লোড হলে চেক করবে অলরেডি লগইন করা আছে কিনা
     document.addEventListener("DOMContentLoaded", async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
@@ -88,18 +35,25 @@
       }
     });
 
-    // GitHub দিয়ে লগইন ট্রিগার করা
-    document.getElementById('github-login-btn').addEventListener('click', async () => {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
-        options: {
-          redirectTo: window.location.origin + '/frontend/chat.html'
+    // GitHub লগইন ফাংশন
+    async function handleGitHubLogin() {
+      try {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'github',
+          options: {
+            redirectTo: window.location.origin + '/frontend/chat.html'
+          }
+        });
+        if (error) {
+          alert('লগইন এরর: ' + error.message);
         }
-      });
-      if (error) {
-        alert('GitHub লগইন এরর: ' + error.message);
+      } catch (err) {
+        console.error('Login exception:', err);
       }
-    });
+    }
+
+    // বাটনে ক্লিক করলে যেন ফাংশনটি ১০০% কাজ করে
+    document.getElementById('github-login-btn').addEventListener('click', handleGitHubLogin);
   </script>
 </body>
 </html>
