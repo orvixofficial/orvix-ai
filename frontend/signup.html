@@ -3,48 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up - Orvix AI</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  
+  <title>Orvix AI - Signup</title>
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body style="margin: 0; font-family: sans-serif; background: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh;">
 
-  <div class="auth-container">
-    <div class="auth-card">
-      <div class="logo">Orvix<span>.AI</span></div>
-      <h2>Create Account</h2>
-      <p>নতুন অ্যাকাউন্ট তৈরি করুন</p>
+  <div style="background: #1e293b; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 100%; max-width: 400px; border: 1px solid #334155;">
+    <h2 style="text-align: center; margin-bottom: 24px; font-size: 24px;">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
+    
+    <div id="message" style="margin-bottom: 15px; font-size: 14px; text-align: center;"></div>
 
-      <form id="signupForm">
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="email" placeholder="name@example.com" required>
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="password" placeholder="••••••••" required>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
-      </form>
-
-      <!-- Google Sign Up Button -->
-      <div style="margin: 15px 0; text-align: center;">
-        <p style="margin-bottom: 10px; color: #666;">অথবা</p>
-        <button type="button" onclick="signInWithGoogle()" class="btn btn-block" style="background: #fff; color: #333; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; cursor: pointer; border-radius: 6px;">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="18">
-          Sign up with Google
-        </button>
+    <form id="signup-form">
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 5px;">ইমেইল এড্রেস</label>
+        <input type="email" id="signup-email" required placeholder="example@domain.com" style="width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; box-sizing: border-box;">
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 5px;">পাসওয়ার্ড</label>
+        <input type="password" id="signup-password" required placeholder="••••••••" style="width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; box-sizing: border-box;">
       </div>
 
-      <p class="auth-footer">
-        আগে থেকেই অ্যাকাউন্ট আছে? <a href="login.html">Sign In করুন</a>
-      </p>
-    </div>
+      <button type="submit" style="width: 100%; padding: 12px; background: #3b82f6; color: #fff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">সাইন আপ</button>
+    </form>
+
+    <p style="text-align: center; margin-top: 20px; font-size: 13px; color: #94a3b8;">
+      ইতিমধ্যে অ্যাকাউন্ট আছে? <a href="login.html" style="color: #3b82f6; text-decoration: none; font-weight: bold;">লগইন করুন</a>
+    </p>
   </div>
 
-  <script src="auth.js"></script>
+  <script>
+    const SUPABASE_URL = 'https://evdchqddhuzbgyexdnyq.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2ZGNoaWRkaHV6Ymd5ZXhkbnlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODYwNzUsImV4cCI6MjA2NjI2MjA3NX0.zVvG5Vq7vYvG5Vq7vYvG5Vq7vYvG5Vq7vYvG5Vq7vYv';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      const msgDiv = document.getElementById('message');
+
+      const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password
+      });
+
+      if (error) {
+        msgDiv.style.color = '#ef4444';
+        msgDiv.textContent = 'এরর: ' + error.message;
+      } else {
+        msgDiv.style.color = '#22c55e';
+        msgDiv.textContent = 'সফলভাবে অ্যাকাউন্ট তৈরি হয়েছে! এখন লগইন পেজে যেতে পারেন।';
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+      }
+    });
+  </script>
 </body>
 </html>
