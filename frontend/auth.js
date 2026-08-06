@@ -2,57 +2,43 @@
 const SUPABASE_URL = 'https://jyokiouskrfwzuerbyue.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_DBVEUxrgKCO9SQvRp11uHw_Q3_lYIFN';
 
-// Supabase ক্লায়েন্ট তৈরি করা
 const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 // ১. গুগল দিয়ে লগইন করার ফাংশন
 async function signInWithGoogle() {
-  if (!supabaseClient) {
-    alert('Supabase লোড হতে সমস্যা হয়েছে!');
-    return;
-  }
+  if (!supabaseClient) return alert('Supabase লোড হয়নি!');
   
-  try {
-    const { error } = await supabaseClient.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin + '/chat.html'
-      }
-    });
-    if (error) {
-      alert('লগইন ত্রুটি: ' + error.message);
+  await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin + '/chat.html'
     }
-  } catch (err) {
-    console.error("Login exception:", err);
-  }
+  });
 }
 
-// ২. সেশন চেক করে পেজ রিডাইরেক্ট বা রাউটিং করার ফাংশন
+// ২. সেশন চেক করে সঠিক পেজে রাখার ফাংশন (লুপ রোধ করতে সুরক্ষিত)
 async function handleAuthRouting() {
   if (!supabaseClient) return;
 
   const currentPath = window.location.pathname;
   
-  // Supabase থেকে বর্তমান সেশন বা ইউজার ডাটা ফেচ করা
-  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  // একটু সময় নিয়ে সেশন ফেচ করা যাতে ব্রাউজার ডাটা পেতে মিস না করে
+  const { data: { session } } = await supabaseClient.auth.getSession();
 
-  console.log("Current Path:", currentPath);
-  console.log("User Session:", session ? "Active" : "Null");
-
-  // ক) যদি ইউজার chat.html এ থাকে কিন্তু লগইন করা না থাকে -> login.html এ পাঠিয়ে দিবে
+  // ক) যদি chat.html পেজে থাকে কিন্তু লগইন করা না থাকে, তবেই login.html এ পাঠাবে
   if (currentPath.includes('chat.html') && !session) {
     window.location.href = 'login.html';
     return;
   }
 
-  // খ) যদি ইউজার login.html এ থাকে কিন্তু অলরেডি লগইন করা থাকে -> সরাসরি chat.html এ পাঠিয়ে দিবে
+  // খ) যদি login.html পেজে থাকে এবং অলরেডি লগইন করা থাকে, তবেই chat.html এ পাঠাবে
   if (currentPath.includes('login.html') && session) {
     window.location.href = 'chat.html';
     return;
   }
 }
 
-// ৩. লগআউট করার ফাংশন
+// ৩. লগআউট ফাংশন
 async function handleLogout() {
   if (supabaseClient) {
     await supabaseClient.auth.signOut();
@@ -60,5 +46,5 @@ async function handleLogout() {
   }
 }
 
-// পেজ লোড হওয়া মাত্রই রাউটিং চেক করবে
+// পেজ লোড হওয়ার সাথে সাথে চেক করবে
 window.addEventListener('DOMContentLoaded', handleAuthRouting);
