@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orvix AI - Neural Workspace</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Supabase JS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="display: flex; height: 100vh; margin: 0; background: #0f172a; color: #fff; font-family: 'Inter', sans-serif;">
+
+  <!-- Sidebar -->
+  <aside style="width: 280px; background: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; justify-content: space-between; padding: 20px;">
+    <div>
+      <div style="font-size: 20px; font-weight: 700; margin-bottom: 30px; color: #38bdf8;">Orvix AI Workspace</div>
+      <button onclick="window.location.href='chat.html'" style="width: 100%; padding: 12px; background: #0284c7; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 20px;">+ New Chat</button>
+    </div>
+
+    <!-- Sidebar User Profile & Avatar -->
+    <div style="border-top: 1px solid #334155; padding-top: 15px; display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
+        <img id="sidebar-user-avatar" src="https://via.placeholder.com/40" alt="Avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+        <span id="sidebar-user-name" style="font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;">Loading...</span>
+      </div>
+      <button onclick="handleLogout()" title="Logout" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px;">Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main Chat Area -->
+  <main style="flex: 1; display: flex; flex-direction: column; height: 100vh;">
+    <!-- Chat Header -->
+    <header style="padding: 20px; border-bottom: 1px solid #334155; background: #1e293b; font-weight: 600; font-size: 18px;">
+      Neural Chat v1.0 Pro
+    </header>
+
+    <!-- Chat Messages Box -->
+    <div id="chat-messages" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
+      <div style="background: #334155; padding: 12px 18px; border-radius: 10px; max-width: 70%; align-self: flex-start;">
+        হ্যালো! আমি Orvix AI। আজ আপনাকে কীভাবে সাহায্য করতে পারি?
+      </div>
+    </div>
+
+    <!-- Chat Input Box -->
+    <div style="padding: 20px; background: #1e293b; border-top: 1px solid #334155; display: flex; gap: 10px;">
+      <input type="text" id="chat-input" placeholder="আপনার বার্তা এখানে লিখুন..." style="flex: 1; padding: 12px 16px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; outline: none;" onkeypress="if(event.key === 'Enter') sendMessage();">
+      <button onclick="sendMessage()" style="padding: 0 20px; background: #38bdf8; color: #0f172a; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Send</button>
+    </div>
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if(!text) return;
+
+      const container = document.getElementById('chat-messages');
+      
+      // User Message
+      const userMsg = document.createElement('div');
+      userMsg.style.cssText = "background: #0284c7; color: white; padding: 12px 18px; border-radius: 10px; max-width: 70%; align-self: flex-end;";
+      userMsg.innerText = text;
+      container.appendChild(userMsg);
+
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+
+      // Simulated AI Response
+      setTimeout(() => {
+        const aiMsg = document.createElement('div');
+        aiMsg.style.cssText = "background: #334155; color: white; padding: 12px 18px; border-radius: 10px; max-width: 70%; align-self: flex-start;";
+        aiMsg.innerText = "আপনার কথাটি বুঝতে পেরেছি। খুব শীঘ্রই এর উন্নত এআই প্রসেসিং ফিচার যুক্ত করা হবে!";
+        container.appendChild(aiMsg);
+        container.scrollTop = container.scrollHeight;
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
