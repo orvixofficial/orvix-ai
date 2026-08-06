@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orvix AI - Account</title>
+  <title>Orvix AI - Account & Login</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; }
@@ -20,7 +20,7 @@
     .input-group label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 4px; }
     .input-group input { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; box-sizing: border-box; }
     .btn-submit { background: #3b82f6; color: white; margin-top: 5px; }
-    .msg { font-size: 12px; text-align: center; margin-bottom: 10px; }
+    .msg { font-size: 13px; text-align: center; margin-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -31,9 +31,9 @@
 
     <div id="msg" class="msg"></div>
 
-    <!-- গুগল লগইন -->
+    <!-- গুগল লগইন/সাইনআপ -->
     <button id="google-btn" class="btn btn-google">Google দিয়ে চালিয়ে যান</button>
-    <!-- গিটহাব লগইন -->
+    <!-- গিটহাব লগইন/সাইনআপ -->
     <button id="github-btn" class="btn btn-github">GitHub দিয়ে চালিয়ে যান</button>
 
     <div class="divider">অথवा ইমেইল দিয়ে</div>
@@ -48,7 +48,7 @@
         <label>পাসওয়ার্ড</label>
         <input type="password" id="password" required placeholder="••••••••">
       </div>
-      <button type="submit" class="btn btn-submit">সাবমিট করুন</button>
+      <button type="submit" class="btn btn-submit">অ্যাকাউন্ট তৈরি / লগইন করুন</button>
     </form>
   </div>
 
@@ -58,32 +58,52 @@
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const msgBox = document.getElementById('msg');
-    const chatUrl = '/chat.html'; // আপনার চ্যাট পেজের পাথ (প্রয়োজনে /frontend/chat.html দিন)
+    
+    // আপনার প্রজেক্টে chat.html ফাইলটি যে ফোল্ডারে আছে তার সঠিক পাথ এখানে দিন। 
+    // যদি রুট ফোল্ডারে থাকে তবে শুধু '/chat.html' দিন, আর frontend ফোল্ডারে থাকলে '/frontend/chat.html' দিন।
+    const chatUrl = '/frontend/chat.html'; 
 
-    // ম্যানুয়াল ইমেইল দিয়ে সাইন আপ বা লগইন
+    // ম্যানুয়াল ইমেইল ও পাসওয়ার্ড সাবমিট হ্যান্ডলার
     document.getElementById('auth-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
 
-      // প্রথমে লগইন করার চেষ্টা করবে, একাউন্ট না থাকলে সাইনআপ করবে
-      let { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      msgBox.style.color = '#38bdf8';
+      msgBox.textContent = 'প্রসেসিং হচ্ছে...';
+
+      // প্রথমে সাইন আপ করার চেষ্টা করবে
+      let { data, error } = await supabase.auth.signUp({ email, password });
       
       if (error) {
-        // লগইন না হলে নতুন অ্যাকাউন্ট তৈরি করার চেষ্টা করবে
-        let signUpRes = await supabase.auth.signUp({ email, password });
-        if (signUpRes.error) {
+        // যদি অ্যাকাউন্ট আগেই করা থাকে, তবে সরাসরি লগইন করার চেষ্টা করবে
+        let loginRes = await supabase.auth.signInWithPassword({ email, password });
+        if (loginRes.error) {
           msgBox.style.color = '#ef4444';
-          msgBox.textContent = 'ত্রুটি: ' + signUpRes.error.message;
+          msgBox.textContent = 'ত্রুটি: ' + loginRes.error.message;
         } else {
           msgBox.style.color = '#22c55e';
-          msgBox.textContent = 'সফলভাবে অ্যাকাউন্ট তৈরি হয়েছে! চ্যাটে নেওয়া হচ্ছে...';
-          setTimeout(() => window.location.href = chatUrl, 1500);
+          msgBox.textContent = 'লগইন সফল হয়েছে! চ্যাটে নেওয়া হচ্ছে...';
+          setTimeout(() => window.location.href = chatUrl, 1000);
         }
       } else {
-        msgBox.style.color = '#22c55e';
-        msgBox.textContent = 'লগইন সফল হয়েছে!';
-        setTimeout(() => window.location.href = chatUrl, 1000);
+        // যদি সুপাবেজে ইমেইল কনফার্মেশন অন থাকে এবং ইউজার ডেটা আসে
+        if (data?.session) {
+          msgBox.style.color = '#22c55e';
+          msgBox.textContent = 'একাউন্ট সফলভাবে তৈরি হয়েছে!';
+          setTimeout(() => window.location.href = chatUrl, 1000);
+        } else {
+          msgBox.style.color = '#f59e0b';
+          msgBox.textContent = 'একাউন্ট তৈরি হয়েছে! সরাসরি লগইন করা হচ্ছে...';
+          // সাইনআপের পর অটো লগইন করার চেষ্টা
+          let autoLogin = await supabase.auth.signInWithPassword({ email, password });
+          if(!autoLogin.error) {
+            setTimeout(() => window.location.href = chatUrl, 1000);
+          } else {
+            msgBox.style.color = '#22c55e';
+            msgBox.textContent = 'একাউন্ট তৈরি সফল! এবার লগইন করুন।';
+          }
+        }
       }
     });
 
