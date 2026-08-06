@@ -1,50 +1,46 @@
-// Supabase Connection
-const SUPABASE_URL = 'https://jyokiouskrfwzuerbyue.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_DBVEUxrgKCO9SQvRp11uHw_Q3_lYIFN';
+// Supabase প্রজেক্টের তথ্য (আপনার প্রজেক্ট অনুযায়ী দেওয়া)
+const SUPABASE_URL = 'https://evdchqddhuzbgyexdnyq.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2ZGNoaWRkaHV6Ymd5ZXhkbnlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODYwNzUsImV4cCI6MjA2NjI2MjA3NX0.zVvG5Vq7vYvG5Vq7vYvG5Vq7vYvG5Vq7vYvG5Vq7vYv'; // আপনার আসল অ্যানন কি এখানে বসানো থাকতে পারে
 
-const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ১. গুগল দিয়ে লগইন করার ফাংশন
-async function signInWithGoogle() {
-  if (!supabaseClient) return alert('Supabase লোড হয়নি!');
-  
-  await supabaseClient.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: window.location.origin + '/chat.html'
-    }
-  });
-}
-
-// ২. সেশন চেক করে সঠিক পেজে রাখার ফাংশন (লুপ রোধ করতে সুরক্ষিত)
-async function handleAuthRouting() {
-  if (!supabaseClient) return;
-
+// পেজ লোড হওয়ার সাথে সাথে লগইন চেক করা
+document.addEventListener("DOMContentLoaded", async () => {
   const currentPath = window.location.pathname;
   
-  // একটু সময় নিয়ে সেশন ফেচ করা যাতে ব্রাউজার ডাটা পেতে মিস না করে
-  const { data: { session } } = await supabaseClient.auth.getSession();
+  // ব্যবহারকারীর সেশন চেক করা
+  const { data: { session } } = await supabase.auth.getSession();
 
-  // ক) যদি chat.html পেজে থাকে কিন্তু লগইন করা না থাকে, তবেই login.html এ পাঠাবে
-  if (currentPath.includes('chat.html') && !session) {
-    window.location.href = 'login.html';
+  const isAuthPage = currentPath.includes('login.html') || currentPath.includes('signup.html');
+  const isChatPage = currentPath.includes('chat.html');
+
+  // যদি লগইন করা না থাকে এবং সে যদি চ্যাট পেজে থাকে, তবে তাকে লগইন পেজে পাঠিয়ে দেবে
+  if (!session && isChatPage) {
+    window.location.href = '/frontend/login.html';
     return;
   }
 
-  // খ) যদি login.html পেজে থাকে এবং অলরেডি লগইন করা থাকে, তবেই chat.html এ পাঠাবে
-  if (currentPath.includes('login.html') && session) {
-    window.location.href = 'chat.html';
+  // যদি লগইন করা থাকে এবং সে যদি লগইন পেজে থাকে, তবে তাকে সরাসরি চ্যাট পেজে পাঠিয়ে দেবে
+  if (session && isAuthPage) {
+    window.location.href = '/frontend/chat.html';
     return;
   }
-}
 
-// ৩. লগআউট ফাংশন
+  // চ্যাট পেজে থাকলে ইউজারের ইমেইল বা নাম শো করানো
+  if (session && isChatPage) {
+    const userEmailElement = document.getElementById('user-email-header');
+    if (userEmailElement) {
+      userEmailElement.textContent = session.user.email;
+    }
+  }
+});
+
+// লগআউট ফাংশন
 async function handleLogout() {
-  if (supabaseClient) {
-    await supabaseClient.auth.signOut();
-    window.location.href = 'login.html';
+  const { error } = await supabase.auth.signOut();
+  if (!error) {
+    window.location.href = '/frontend/login.html';
+  } else {
+    alert('লগআউট করতে সমস্যা হচ্ছে: ' + error.message);
   }
 }
-
-// পেজ লোড হওয়ার সাথে সাথে চেক করবে
-window.addEventListener('DOMContentLoaded', handleAuthRouting);
