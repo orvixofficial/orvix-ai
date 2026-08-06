@@ -3,23 +3,173 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orvix AI - Login</title>
+  <title>Orvix AI - Login & Signup</title>
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f172a;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: #1e293b;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid #334155;
+      box-sizing: border-box;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 24px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      transition: background 0.3s;
+    }
+    .btn-google {
+      background: #ffffff;
+      color: #1e293b;
+    }
+    .btn-github {
+      background: #24292e;
+      color: #ffffff;
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #64748b;
+      margin: 20px 0;
+      font-size: 13px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #334155;
+    }
+    .divider::before { margin-right: .75em; }
+    .divider::after { margin-left: .75em; }
+    
+    .input-group {
+      margin-bottom: 15px;
+    }
+    .input-group label {
+      display: block;
+      font-size: 13px;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 10px 12px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .btn-submit {
+      background: #3b82f6;
+      color: white;
+      margin-top: 10px;
+    }
+    .toggle-text {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    .toggle-text span {
+      color: #3b82f6;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .error-msg {
+      color: #ef4444;
+      font-size: 13px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .success-msg {
+      color: #22c55e;
+      font-size: 13px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
-<body style="margin: 0; font-family: sans-serif; background: #0f172a; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh;">
+<body>
 
-  <div style="background: #1e293b; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 100%; max-width: 400px; text-align: center; border: 1px solid #334155;">
-    <h2 style="margin-bottom: 24px; font-size: 24px;">Orvix AI এ স্বাগতম</h2>
-    <p style="color: #94a3b8; margin-bottom: 30px; font-size: 14px;">এগিয়ে যেতে আপনার GitHub অ্যাকাউন্ট ব্যবহার করুন</p>
+  <div class="container">
+    <h2 id="form-title">Orvix AI-তে লগইন</h2>
+    <p class="subtitle" id="form-subtitle">আপনার পছন্দের মাধ্যম বেছে নিন</p>
 
-    <!-- GitHub Login Button -->
-    <button id="github-login-btn" style="width: 100%; padding: 12px; background: #24292e; color: #ffffff; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.3s;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <div id="message-container"></div>
+
+    <!-- সোশ্যাল লগইন বাটন -->
+    <button id="google-login-btn" class="btn btn-google">
+      <svg width="18" height="18" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.19v3.15C3.17 21.3 7.23 24 12 24z"/>
+        <path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.19C.43 8.13 0 9.87 0 12s.43 3.87 1.19 5.4l4.09-3.15z"/>
+        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.23 0 3.17 2.7 1.19 6.6l4.09 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/>
+      </svg>
+      Google দিয়ে চালিয়ে যান
+    </button>
+
+    <button id="github-login-btn" class="btn btn-github">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
       </svg>
-      GitHub দিয়ে লগইন করুন
+      GitHub দিয়ে চালিয়ে যান
     </button>
+
+    <div class="divider">অথवा ইমেইল দিয়ে</div>
+
+    <!-- ম্যানুয়াল ইমেইল/পাসওয়ার্ড ফর্ম -->
+    <form id="auth-form">
+      <div class="input-group">
+        <label>ইমেইল এড্রেস</label>
+        <input type="email5" id="email" required placeholder="example@domain.com">
+      </div>
+      <div class="input-group">
+        <label>পাসওয়ার্ড</label>
+        <input type="password" id="password" required placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn btn-submit" id="submit-btn">লগইন করুন</button>
+    </form>
+
+    <div class="toggle-text">
+      <p id="toggle-p">একাউন্ট নেই? <span id="toggle-action">সাইন আপ করুন</span></p>
+    </div>
   </div>
 
   <script>
@@ -27,7 +177,9 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV2ZGNoaWRkaHV6Ymd5ZXhkbnlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODYwNzUsImV4cCI6MjA2NjI2MjA3NX0.zVvG5Vq7vYvG5Vq7vYvG5Vq7vYvG5Vq7vYvG5Vq7vYv';
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // পেজ লোড হলে চেক করবে অলরেডি লগইন করা আছে কিনা
+    let isSignUp = false;
+
+    // পেজ লোড হলে সেশন চেক
     document.addEventListener("DOMContentLoaded", async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
@@ -35,25 +187,91 @@
       }
     });
 
-    // GitHub লগইন ফাংশন
-    async function handleGitHubLogin() {
-      try {
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: 'github',
-          options: {
-            redirectTo: window.location.origin + '/frontend/chat.html'
-          }
-        });
-        if (error) {
-          alert('লগইন এরর: ' + error.message);
-        }
-      } catch (err) {
-        console.error('Login exception:', err);
+    // ফর্ম মোড পরিবর্তন (লগইন থেকে সাইনআপ বা সাইনআপ থেকে লগইন)
+    const toggleAction = document.getElementById('toggle-action');
+    const formTitle = document.getElementById('form-title');
+    const formSubtitle = document.getElementById('form-subtitle');
+    const submitBtn = document.getElementById('submit-btn');
+    const toggleP = document.getElementById('toggle-p');
+
+    toggleAction.addEventListener('click', () => {
+      isSignUp = !isSignUp;
+      if (isSignUp) {
+        formTitle.textContent = "Orvix AI-তে সাইন আপ";
+        formSubtitle.textContent = "নতুন অ্যাকাউন্ট তৈরি করুন";
+        submitBtn.textContent = "একাউন্ট তৈরি করুন";
+        toggleP.innerHTML = 'ইতিমধ্যে অ্যাকাউন্ট আছে? <span id="toggle-action" onclick="switchMode()">লগইন করুন</span>';
+      } else {
+        formTitle.textContent = "Orvix AI-তে লগইন";
+        formSubtitle.textContent = "আপনার পছন্দের মাধ্যম বেছে নিন";
+        submitBtn.textContent = "লগইন করুন";
+        toggleP.innerHTML = 'একাউন্ট নেই? <span id="toggle-action" onclick="switchMode()">সাইন আপ করুন</span>';
+      }
+    });
+
+    window.switchMode = function() {
+      isSignUp = !isSignUp;
+      if (isSignUp) {
+        formTitle.textContent = "Orvix AI-তে সাইন আপ";
+        formSubtitle.textContent = "নতুন অ্যাকাউন্ট তৈরি করুন";
+        submitBtn.textContent = "একাউন্ট তৈরি করুন";
+        toggleP.innerHTML = 'ইতিমধ্যে অ্যাকাউন্ট আছে? <span id="toggle-action" onclick="switchMode()">লগইন করুন</span>';
+      } else {
+        formTitle.textContent = "Orvix AI-তে লগইন";
+        formSubtitle.textContent = "আপনার পছন্দের মাধ্যম বেছে নিন";
+        submitBtn.textContent = "লগইন করুন";
+        toggleP.innerHTML = 'একাউন্ট নেই? <span id="toggle-action" onclick="switchMode()">সাইন আপ করুন</span>';
       }
     }
 
-    // বাটনে ক্লিক করলে যেন ফাংশনটি ১০০% কাজ করে
-    document.getElementById('github-login-btn').addEventListener('click', handleGitHubLogin);
+    // মেসেজ দেখানোর ফাংশন
+    function showMessage(text, isError = true) {
+      const msgContainer = document.getElementById('message-container');
+      msgContainer.innerHTML = `<div class="${isError ? 'error-msg' : 'success-msg'}">${text}</div>`;
+    }
+
+    // ম্যানুয়াল লগইন বা সাইনআপ হ্যান্ডলর
+    document.getElementById('auth-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      if (isSignUp) {
+        // সাইন আপ প্রসেস
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) {
+          showMessage(error.message);
+        } else {
+          showMessage("একাউন্ট সফলভাবে তৈরি হয়েছে! ইমেইল ভেরিফাই করুন অথবা লগইন করুন।", false);
+        }
+      } else {
+        // লগইন প্রসেস
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          showMessage("লগইন ব্যর্থ হয়েছে: " + error.message);
+        } else {
+          window.location.replace('/frontend/chat.html');
+        }
+      }
+    });
+
+    // গুগল লগইন
+    document.getElementById('google-login-btn').addEventListener('click', async () => {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + '/frontend/chat.html' }
+      });
+      if (error) showMessage(error.message);
+    });
+
+    // গিটহাব লগইন
+    document.getElementById('github-login-btn').addEventListener('click', async () => {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: { redirectTo: window.location.origin + '/frontend/chat.html' }
+      });
+      if (error) showMessage(error.message);
+    });
   </script>
 </body>
 </html>
