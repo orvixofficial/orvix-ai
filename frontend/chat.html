@@ -3,81 +3,207 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orvix AI - Neural Workspace</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Orvix AI - Local Knowledge Base</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { display: flex; height: 100vh; background: #0f172a; color: #f8fafc; overflow: hidden; }
+    
+    /* Sidebar Styles */
+    aside { width: 260px; background: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; }
+    .new-chat-btn { width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .new-chat-btn:hover { background: #1d4ed8; }
+    
+    /* User Profile Footer in Sidebar */
+    .user-profile { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #334155; padding-top: 12px; }
+    .user-info { display: flex; align-items: center; gap: 10px; overflow: hidden; }
+    .user-info img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+    .user-info span { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+    .logout-btn { background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; }
+
+    /* Main Chat Area */
+    main { flex: 1; display: flex; flex-direction: column; height: 100vh; background: #0f172a; }
+    header { padding: 16px 24px; border-bottom: 1px solid #334155; background: #1e293b; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: space-between; }
+    
+    /* Messages Container */
+    #chat-messages { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth; }
+    .message { display: flex; max-width: 800px; margin: 0 auto; width: 100%; padding: 16px 24px; border-radius: 12px; gap: 16px; line-height: 1.6; font-size: 15px; }
+    .message.user { background: #1e293b; border: 1px solid #334155; }
+    .message.ai { background: #0f172a; border: 1px solid #1e293b; }
+    .message .avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; flex-shrink: 0; }
+    .message.user .avatar { background: #3b82f6; color: white; }
+    .message.ai .avatar { background: #10b981; color: white; }
+    .message .content { flex: 1; word-break: break-word; }
+
+    /* Input Area */
+    .input-container { padding: 20px; background: #0f172a; display: flex; justify-content: center; }
+    .input-box { max-width: 800px; width: 100%; background: #1e293b; border: 1px solid #334155; border-radius: 12px; display: flex; align-items: center; padding: 8px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .input-box textarea { flex: 1; background: transparent; border: none; color: white; resize: none; outline: none; font-size: 15px; max-height: 200px; padding: 8px; line-height: 1.4; }
+    .input-box button { background: #3b82f6; color: white; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+    .input-box button:hover { background: #2563eb; }
+  </style>
 </head>
-<body style="display: flex; height: 100vh; margin: 0; background: #0f172a; color: #fff; font-family: 'Inter', sans-serif;">
+<body>
 
   <!-- Sidebar -->
-  <aside style="width: 280px; background: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; justify-content: space-between; padding: 20px;">
+  <aside>
     <div>
-      <div style="font-size: 20px; font-weight: 700; margin-bottom: 30px; color: #38bdf8;">Orvix AI Workspace</div>
-      <button onclick="window.location.href='chat.html'" style="width: 100%; padding: 12px; background: #0284c7; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 20px;">+ New Chat</button>
+      <div style="font-size: 18px; font-weight: 700; margin-bottom: 24px; color: #38bdf8; display: flex; align-items: center; gap: 8px;">✨ Orvix AI</div>
+      <button class="new-chat-btn" onclick="startNewChat()">+ নতুন চ্যাট</button>
     </div>
 
-    <!-- Sidebar User Profile & Avatar -->
-    <div style="border-top: 1px solid #334155; padding-top: 15px; display: flex; align-items: center; justify-content: space-between;">
-      <div style="display: flex; align-items: center; gap: 10px; overflow: hidden;">
-        <img id="sidebar-user-avatar" src="https://via.placeholder.com/40" alt="Avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
-        <span id="sidebar-user-name" style="font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;">Loading...</span>
+    <!-- User Profile Footer -->
+    <div class="user-profile">
+      <div class="user-info">
+        <img id="sidebar-user-avatar" src="https://via.placeholder.com/32" alt="Avatar">
+        <span id="sidebar-user-name">লোডিং...</span>
       </div>
-      <button onclick="handleLogout()" title="Logout" style="background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 12px;">Logout</button>
+      <button class="logout-btn" onclick="handleLogout()">লগআউট</button>
     </div>
   </aside>
 
-  <!-- Main Chat Area -->
-  <main style="flex: 1; display: flex; flex-direction: column; height: 100vh;">
-    <!-- Chat Header -->
-    <header style="padding: 20px; border-bottom: 1px solid #334155; background: #1e293b; font-weight: 600; font-size: 18px;">
-      Neural Chat v1.0 Pro
+  <!-- Main Workspace -->
+  <main>
+    <header>
+      <span>Orvix Workspace (Local DB)</span>
+      <span style="font-size: 13px; color: #94a3b8; font-weight: 400;" id="user-email-header"></span>
     </header>
 
-    <!-- Chat Messages Box -->
-    <div id="chat-messages" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
-      <div style="background: #334155; padding: 12px 18px; border-radius: 10px; max-width: 70%; align-self: flex-start;">
-        হ্যালো! আমি Orvix AI। আজ আপনাকে কীভাবে সাহায্য করতে পারি?
+    <!-- Chat Stream -->
+    <div id="chat-messages">
+      <div class="message ai">
+        <div class="avatar">AI</div>
+        <div class="content">হ্যালো! আমি আপনার নিজস্ব তথ্যভান্ডার চালিত এআই। আপনার যা জানার আছে নিচে লিখে জিজ্ঞেস করুন।</div>
       </div>
     </div>
 
-    <!-- Chat Input Box -->
-    <div style="padding: 20px; background: #1e293b; border-top: 1px solid #334155; display: flex; gap: 10px;">
-      <input type="text" id="chat-input" placeholder="আপনার বার্তা এখানে লিখুন..." style="flex: 1; padding: 12px 16px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; outline: none;" onkeypress="if(event.key === 'Enter') sendMessage();">
-      <button onclick="sendMessage()" style="padding: 0 20px; background: #38bdf8; color: #0f172a; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Send</button>
+    <!-- Input Bar -->
+    <div class="input-container">
+      <div class="input-box">
+        <textarea id="chat-input" rows="1" placeholder="আপনার তথ্যভান্ডার থেকে কিছু খুঁজুন..." onkeydown="handleKeyPress(event)"></textarea>
+        <button onclick="sendMessage()">পাঠান</button>
+      </div>
     </div>
   </main>
 
   <script src="auth.js"></script>
   <script>
+    // -------------------------------------------------------------
+    // আপনার নিজস্ব তথ্যভান্ডার (এখানে আপনি আপনার ইচ্ছেমতো প্রশ্ন ও উত্তর বাড়াতে পারবেন)
+    // -------------------------------------------------------------
+    const myKnowledgeBase = [
+      {
+        keywords: ["orvix", "অরভিক্স", "orvix ai"],
+        answer: "Orvix AI হলো আপনার নিজস্ব লোকাল ডেটাবেজ দ্বারা পরিচালিত একটি স্মার্ট চ্যাট প্ল্যাটফর্ম।"
+      },
+      {
+        keywords: ["কে তৈরি", "কে বানিয়েছে", "developer", "মালিক"],
+        answer: "এই প্রজেক্টটি আপনি নিজে তৈরি করছেন এবং এটি আপনার নিজস্ব লোকাল ডেটাবেজ দিয়ে পরিচালিত হচ্ছে।"
+      },
+      {
+        keywords: ["সালাম", "assalamu alaikum", "hi", "hello"],
+        answer: "ওয়ালাইকুম আসসালাম ওয়া রাহমাতুল্লাহ / হ্যালো! বলুন, আপনাকে কীভাবে সাহায্য করতে পারি?"
+      },
+      {
+        keywords: ["কেমন আছো", "how are you"],
+        answer: "আলহামদুলিল্লাহ ভালো আছি! আপনার তথ্যভান্ডার থেকে উত্তর দিতে প্রস্তুত।"
+      }
+      // নতুন কোনো প্রশ্ন যোগ করতে চাইলে নিচে কমা দিয়ে এভাবে বসাবেন:
+      // {
+      //   keywords: ["keyword1", "keyword2"],
+      //   answer: "এখানে উত্তর লিখবেন।"
+      // }
+    ];
+
+    // ডেটাবেজ থেকে নিখুঁত উত্তর খোঁজার ফাংশন
+    function findAnswerFromMyDatabase(userText) {
+      const text = userText.toLowerCase();
+      
+      for (let item of myKnowledgeBase) {
+        for (let keyword of item.keywords) {
+          if (text.includes(keyword.toLowerCase())) {
+            return item.answer;
+          }
+        }
+      }
+      
+      return "দুঃখিত, আমার এই লোকাল তথ্যভান্ডারে এই বিষয়ে কোনো তথ্য নেই। আপনি চাইলে কোডে গিয়ে নতুন তথ্য যুক্ত করে নিতে পারেন।";
+    }
+
+    // পেজ লোড হওয়ার সাথে সাথে লগইন চেক করা
+    window.addEventListener('DOMContentLoaded', async () => {
+      if (typeof supabaseClient !== 'undefined') {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        
+        if (!session) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const user = session.user;
+        const name = user.user_metadata?.full_name || user.email.split('@')[0];
+        const avatar = user.user_metadata?.avatar_url || 'https://via.placeholder.com/32';
+
+        document.getElementById('sidebar-user-name').innerText = name;
+        document.getElementById('sidebar-user-avatar').src = avatar;
+        document.getElementById('user-email-header').innerText = user.email;
+      }
+    });
+
+    function handleKeyPress(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    }
+
+    // মেসেজ সেন্ড এবং ডেটাবেজ থেকে উত্তর দেখানোর মূল ফাংশন
     function sendMessage() {
       const input = document.getElementById('chat-input');
       const text = input.value.trim();
-      if(!text) return;
+      if (!text) return;
 
       const container = document.getElementById('chat-messages');
-      
-      // User Message
-      const userMsg = document.createElement('div');
-      userMsg.style.cssText = "background: #0284c7; color: white; padding: 12px 18px; border-radius: 10px; max-width: 70%; align-self: flex-end;";
-      userMsg.innerText = text;
-      container.appendChild(userMsg);
+
+      // ইউজারের মেসেজ চ্যাটে যোগ করা
+      const userMsgDiv = document.createElement('div');
+      userMsgDiv.className = 'message user';
+      userMsgDiv.innerHTML = `<div class="avatar">U</div><div class="content">${escapeHtml(text)}</div>`;
+      container.appendChild(userMsgDiv);
 
       input.value = '';
       container.scrollTop = container.scrollHeight;
 
-      // Simulated AI Response
+      // সামান্য বিরতি দিয়ে ডেটাবেজ থেকে উত্তর নিয়ে আসা
       setTimeout(() => {
-        const aiMsg = document.createElement('div');
-        aiMsg.style.cssText = "background: #334155; color: white; padding: 12px 18px; border-radius: 10px; max-width: 70%; align-self: flex-start;";
-        aiMsg.innerText = "আপনার কথাটি বুঝতে পেরেছি। খুব শীঘ্রই এর উন্নত এআই প্রসেসিং ফিচার যুক্ত করা হবে!";
-        container.appendChild(aiMsg);
+        const answer = findAnswerFromMyDatabase(text);
+
+        const aiMsgDiv = document.createElement('div');
+        aiMsgDiv.className = 'message ai';
+        aiMsgDiv.innerHTML = `<div class="avatar">AI</div><div class="content">${escapeHtml(answer)}</div>`;
+        container.appendChild(aiMsgDiv);
         container.scrollTop = container.scrollHeight;
-      }, 1000);
+      }, 300);
+    }
+
+    function startNewChat() {
+      document.getElementById('chat-messages').innerHTML = `
+        <div class="message ai">
+          <div class="avatar">AI</div>
+          <div class="content">নতুন চ্যাট শুরু হয়েছে। বলুন, কী জানতে চান?</div>
+        </div>
+      `;
+    }
+
+    function escapeHtml(text) {
+      const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+      return text.replace(/[&<>"']/g, function(m) { return map[m]; });
     }
   </script>
 </body>
